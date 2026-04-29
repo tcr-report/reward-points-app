@@ -1,0 +1,117 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Exam {
+  id        Int       @id @default(autoincrement())
+  title     String
+  category  String    @default("일반")
+  createdAt DateTime  @default(now())
+  
+  questions Question[]
+  sessions  TestSession[]
+}
+
+model Question {
+  id            Int      @id @default(autoincrement())
+  examId        Int      
+  number        Int      
+  type          String   
+  questionText  String
+  options       String   
+  correctAnswer String
+  explanation   String?  // Optional explanation field
+  
+  exam          Exam     @relation(fields: [examId], references: [id], onDelete: Cascade)
+  answers       StudentAnswer[]
+
+  @@unique([examId, number])
+}
+
+model TestSession {
+  id        Int      @id @default(autoincrement())
+  examId    Int
+  level     String
+  grade     String
+  name      String
+  startTime DateTime @default(now())
+  endTime   DateTime?
+  score     Int?
+  
+  exam      Exam          @relation(fields: [examId], references: [id], onDelete: Cascade)
+  studentId Int?
+  student   Student?      @relation(fields: [studentId], references: [id], onDelete: SetNull)
+  answers   StudentAnswer[]
+}
+
+model StudentAnswer {
+  id             Int         @id @default(autoincrement())
+  sessionId      Int
+  questionId     Int
+  selectedAnswer String
+  isCorrect      Boolean
+  
+  session        TestSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  question       Question    @relation(fields: [questionId], references: [id], onDelete: Cascade)
+  
+  @@unique([sessionId, questionId])
+}
+
+model Category {
+  id        Int      @id @default(autoincrement())
+  name      String   @unique
+  createdAt DateTime @default(now())
+}
+
+model Student {
+  id             Int      @id @default(autoincrement())
+  name           String
+  level          String
+  grade          String
+  gender         String   @default("F") // M or F
+  phone          String?  
+  address        String?  
+  birthDate      String?  
+  createdAt      DateTime @default(now())
+
+  rewardPoints   Int      @default(0)
+  penaltyPoints  Int      @default(0)
+
+  fitnessResults PhysicalTestResult[]
+  academicSessions TestSession[]
+
+  @@unique([name, level, grade])
+}
+
+model PhysicalTestSession {
+  id        Int      @id @default(autoincrement())
+  title     String   // e.g. "2026년 3월 체력테스트"
+  testDate  DateTime
+  createdAt DateTime @default(now())
+
+  results   PhysicalTestResult[]
+}
+
+model PhysicalTestResult {
+  id         Int      @id @default(autoincrement())
+  sessionId  Int
+  studentId  Int
+  pushup     Int      @default(0)
+  lungeR     Int      @default(0)
+  lungeL     Int      @default(0)
+  squat      Int      @default(0)
+  situp      Int      @default(0)
+  running    String   @default("") // stored as "HH:MM:SS" string, empty = DNS
+  notes      String   @default("")
+  createdAt  DateTime @default(now())
+
+  session    PhysicalTestSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  student    Student             @relation(fields: [studentId], references: [id], onDelete: Cascade)
+
+  @@unique([sessionId, studentId])
+}

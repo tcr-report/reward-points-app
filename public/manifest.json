@@ -1,0 +1,17 @@
+{
+  "name": "상벌점 관리 시스템",
+  "short_name": "상벌점관리",
+  "description": "학생 상벌점 관리 및 순위 확인 시스템",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#2563eb",
+  "icons": [
+    {
+      "src": "/icon.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
