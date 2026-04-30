@@ -12,8 +12,12 @@ export async function GET() {
       ]
     });
     return NextResponse.json(students);
-  } catch (error) {
-    return NextResponse.json({ error: 'Failed to fetch students' }, { status: 500 });
+  } catch (error: any) {
+    console.error('DATABASE_FETCH_ERROR:', error);
+    return NextResponse.json({ 
+      error: 'Failed to fetch students', 
+      details: error.message 
+    }, { status: 500 });
   }
 }
 
