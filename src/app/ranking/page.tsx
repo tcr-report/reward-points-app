@@ -24,12 +24,23 @@ export default function RankingPage() {
     fetch('/api/students')
       .then(res => res.json())
       .then(data => {
-        setStudents(data);
+        if (!Array.isArray(data)) {
+          console.error('Unexpected students response:', data);
+          setStudents([]);
+        } else {
+          setStudents(data);
+        }
+        setLoading(false);
+      })
+      .catch(error => {
+        console.error('Failed to fetch students:', error);
+        setStudents([]);
         setLoading(false);
       });
   }, []);
 
-  const getSortedStudents = (list: Student[]) => {
+  const getSortedStudents = (list: Student[] | null | undefined) => {
+    if (!Array.isArray(list)) return [];
     return [...list].sort((a, b) => {
       const scoreA = a.rewardPoints - a.penaltyPoints;
       const scoreB = b.rewardPoints - b.penaltyPoints;

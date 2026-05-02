@@ -1,6 +1,5 @@
 'use client';
 
-export const dynamic = 'force-dynamic';
 import { useState, useEffect } from 'react';
 import { Search, Trophy, TrendingUp, TrendingDown, Plus, Minus } from 'lucide-react';
 
