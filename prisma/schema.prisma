@@ -3,8 +3,9 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql" // sqlite에서 변경!
-  url      = env("https://idxwdjiznujqlyusfwsv.supabase.co")
+  provider  = "postgresql" // sqlite에서 변경!
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
 }
 
 
